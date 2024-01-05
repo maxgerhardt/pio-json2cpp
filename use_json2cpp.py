@@ -59,6 +59,8 @@ def download_json2cpp_if_not_present():
     subfolder.rmdir()
 
 def generate_files_from_json():
+    if not JSON_CPP_OUTPUT_DIR.is_dir():
+        JSON_CPP_OUTPUT_DIR.mkdir()
     for json_file in JSON_INPUT_DIR.iterdir():
         if not json_file.is_file():
             continue
