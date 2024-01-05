@@ -17,8 +17,9 @@ json2cpp_download_url = {
     "linux_i686": "https://github.com/lefticus/json2cpp/releases/download/snapshot-fc69acfd190ff0aa23689fae339ed89db4c3ed75/json2cpp-0.0.1-fc69acfd-Linux-Release-Clang-15.0.2.tar.bz2",
     # No Linux ARM (linux_aarch64, linux_armv7l, linux_armv6l)
     # Mac (Intel and ARM use same)
-    "darwin_x86_64": "https://github.com/lefticus/json2cpp/releases/download/snapshot-fc69acfd190ff0aa23689fae339ed89db4c3ed75/json2cpp-0.0.1-fc69acfd-Darwin-Release-Clang-15.0.2.tar.bz2",
-    "darwin_arm64": "https://github.com/lefticus/json2cpp/releases/download/snapshot-fc69acfd190ff0aa23689fae339ed89db4c3ed75/json2cpp-0.0.1-fc69acfd-Darwin-Release-Clang-15.0.2.tar.bz2"
+    # Use GCC instead of Clang release because Clang needs libclang_rt.asan_osx_dynamic.dylib which is not bundled.
+    "darwin_x86_64": "https://github.com/lefticus/json2cpp/releases/download/snapshot-fc69acfd190ff0aa23689fae339ed89db4c3ed75/json2cpp-0.0.1-fc69acfd-Darwin-Release-GNU-11.3.0.tar.bz2",
+    "darwin_arm64": "https://github.com/lefticus/json2cpp/releases/download/snapshot-fc69acfd190ff0aa23689fae339ed89db4c3ed75/json2cpp-0.0.1-fc69acfd-Darwin-Release-GNU-11.3.0.tar.bz2"
 }
 
 PROJ_DIR = Path(env.subst("$PROJECT_DIR"))
@@ -64,7 +65,7 @@ def generate_files_from_json():
     for json_file in JSON_INPUT_DIR.iterdir():
         if not json_file.is_file():
             continue
-        # invoke the tool
+        # invoke the tool assuming it's a .json file
         document_name = json_file.stem + "_json"
         output_base = JSON_CPP_OUTPUT_DIR / document_name
         env.Execute(" ".join([
@@ -83,4 +84,5 @@ env.Append(CPPPATH=[str(JSON2CPP_PATH / "include")])
 # generate cpp files from JSON before compilation begins now.
 # this happens on each script invoke.
 # Could use SCons system to only do this if change in dependency (.json file) is detected, good for now.
+# See https://docs.platformio.org/en/latest/scripting/index.html
 generate_files_from_json()
