@@ -6,6 +6,7 @@ import sys
 import urllib.request
 import zipfile
 import tarfile
+import ssl
 
 json2cpp_download_url = {
     # Windows
@@ -41,6 +42,8 @@ def download_json2cpp_if_not_present():
     # download
     url = json2cpp_download_url[sys_type]
     print("Downloading json2cpp from %s" % url)
+    # Fix against "CERTIFICATE_VERIFY_FAILED unable to get local issuer certificate"
+    ssl._create_default_https_context = ssl._create_unverified_context
     (file, httpresp) = urllib.request.urlretrieve(url)
     if url.endswith(".zip"):
         with zipfile.ZipFile(file, 'r') as zip_ref:
